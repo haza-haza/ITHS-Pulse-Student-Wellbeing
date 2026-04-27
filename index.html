@@ -6,16 +6,18 @@
 <title>ITHS Pulse — Student Wellbeing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- Ambient background orbs -->
+<!-- Ambient background -->
 <div class="bg-orbs">
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
+  <div class="noise-overlay"></div>
 </div>
 
 <!-- ===== SIDEBAR NAV ===== -->
@@ -42,10 +44,9 @@
     </li>
   </ul>
   <div class="sidebar-profile">
-    <div class="avatar">A</div>
+    <img src="logoFinal.png" class="profile-logo" alt="ITHS Logo">
     <div class="profile-info">
-      <span class="profile-name">Alex M.</span>
-      <span class="profile-role">Grade 11</span>
+      <span class="profile-name">ITHS student</span>
     </div>
   </div>
 </nav>
@@ -57,13 +58,12 @@
   <section class="view active" id="view-dashboard">
     <div class="view-header">
       <div>
-        <h1 class="view-title">Good morning, Alex <span class="wave">👋</span></h1>
+        <h1 class="view-title">Good morning, ITHS student <span class="wave">👋</span></h1>
         <p class="view-subtitle">Here's how you're doing today</p>
       </div>
       <div class="header-date" id="header-date"></div>
     </div>
 
-    <!-- Burnout Score Hero Card -->
     <div class="hero-card" id="burnout-hero">
       <div class="hero-left">
         <div class="hero-label">TODAY'S BURNOUT SCORE</div>
@@ -87,7 +87,6 @@
       </div>
     </div>
 
-    <!-- Stats Row -->
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-icon">🌙</div>
@@ -123,7 +122,6 @@
       </div>
     </div>
 
-    <!-- 7-day trend chart -->
     <div class="card chart-card">
       <div class="card-header">
         <h3>7-Day Burnout Trend</h3>
@@ -134,9 +132,7 @@
       </div>
     </div>
 
-    <!-- Bottom Grid -->
     <div class="bottom-grid">
-      <!-- Alerts / Suggestions -->
       <div class="card alerts-card" id="alerts-card">
         <div class="card-header">
           <h3>Support Suggestions</h3>
@@ -147,7 +143,6 @@
         </div>
       </div>
 
-      <!-- Quick actions -->
       <div class="card quick-card">
         <div class="card-header"><h3>Quick Actions</h3></div>
         <div class="quick-actions">
@@ -166,11 +161,54 @@
             <span class="qb-text">Anonymous Help</span>
             <span class="qb-arr">→</span>
           </button>
-          <button class="quick-btn" onclick="switchView('checkin')">
+          <button class="quick-btn ai-btn" onclick="openChatbot()">
             <span class="qb-icon">✦</span>
+            <span class="qb-text">AI Wellbeing Coach</span>
+            <span class="qb-arr">→</span>
+          </button>
+          <button class="quick-btn" onclick="switchView('checkin')">
+            <span class="qb-icon">◈</span>
             <span class="qb-text">New Check-In</span>
             <span class="qb-arr">→</span>
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievement Badges -->
+    <div class="card achievements-card">
+      <div class="card-header">
+        <h3>Achievements</h3>
+        <span class="badge badge-safe">Unlocked</span>
+      </div>
+      <div class="achievements-grid" id="achievements-grid">
+        <div class="achievement-item locked" data-achievement="first-checkin">
+          <div class="achievement-icon">🎯</div>
+          <div class="achievement-info">
+            <div class="achievement-title">First Check-In</div>
+            <div class="achievement-desc">Complete your first daily check-in</div>
+          </div>
+        </div>
+        <div class="achievement-item locked" data-achievement="week-streak">
+          <div class="achievement-icon">🔥</div>
+          <div class="achievement-info">
+            <div class="achievement-title">Week Warrior</div>
+            <div class="achievement-desc">7 consecutive check-ins</div>
+          </div>
+        </div>
+        <div class="achievement-item locked" data-achievement="resource-explorer">
+          <div class="achievement-icon">📚</div>
+          <div class="achievement-info">
+            <div class="achievement-title">Resource Explorer</div>
+            <div class="achievement-desc">View 5 different resources</div>
+          </div>
+        </div>
+        <div class="achievement-item locked" data-achievement="wellness-champion">
+          <div class="achievement-icon">🏆</div>
+          <div class="achievement-info">
+            <div class="achievement-title">Wellness Champion</div>
+            <div class="achievement-desc">Maintain low burnout for 30 days</div>
+          </div>
         </div>
       </div>
     </div>
@@ -187,7 +225,6 @@
 
     <div class="checkin-layout">
       <div class="checkin-form card">
-        <!-- Sleep -->
         <div class="form-group">
           <label class="form-label">🌙 How many hours did you sleep?</label>
           <div class="slider-wrap">
@@ -200,7 +237,6 @@
           </div>
         </div>
 
-        <!-- Stress -->
         <div class="form-group">
           <label class="form-label">⚡ Stress level right now</label>
           <div class="stress-grid" id="stress-grid">
@@ -220,7 +256,6 @@
           </div>
         </div>
 
-        <!-- Homework -->
         <div class="form-group">
           <label class="form-label">📚 Homework hours today</label>
           <div class="slider-wrap">
@@ -233,7 +268,6 @@
           </div>
         </div>
 
-        <!-- Mood -->
         <div class="form-group">
           <label class="form-label">😊 Overall mood today</label>
           <div class="mood-grid" id="mood-grid">
@@ -246,7 +280,6 @@
           <div class="mood-label" id="mood-label">Select your mood</div>
         </div>
 
-        <!-- Classes -->
         <div class="form-group">
           <label class="form-label">📋 Which subjects are stressing you? <span class="optional">(optional)</span></label>
           <div class="class-tags" id="class-tags">
@@ -254,10 +287,9 @@
             <div class="class-tag" data-class="English">English</div>
             <div class="class-tag" data-class="Science">Science</div>
             <div class="class-tag" data-class="History">History</div>
-            <div class="class-tag" data-class="Swedish">Swedish</div>
+            <div class="class-tag" data-class="Spanish">Spanish</div>
             <div class="class-tag" data-class="PE">PE</div>
-            <div class="class-tag" data-class="Art">Art</div>
-            <div class="class-tag" data-class="Tech">Tech</div>
+            <div class="class-tag" data-class="CTE">CTE</div>
           </div>
         </div>
 
@@ -266,7 +298,6 @@
         </button>
       </div>
 
-      <!-- Live Preview -->
       <div class="checkin-preview card">
         <div class="preview-title">Live Preview</div>
         <div class="preview-ring-wrap">
@@ -303,18 +334,24 @@
       </div>
     </div>
 
+    <div class="search-row">
+      <div class="search-container">
+        <input type="text" id="resource-search" placeholder="Search resources..." class="search-input">
+        <span class="search-icon">🔍</span>
+      </div>
+    </div>
+
     <div class="filter-row">
       <button class="filter-btn active" data-filter="all">All</button>
       <button class="filter-btn" data-filter="Math">Math</button>
       <button class="filter-btn" data-filter="English">English</button>
       <button class="filter-btn" data-filter="Science">Science</button>
       <button class="filter-btn" data-filter="History">History</button>
-      <button class="filter-btn" data-filter="Swedish">Swedish</button>
+      <button class="filter-btn" data-filter="Spanish">Spanish</button>
+      <button class="filter-btn" data-filter="CTE">CTE</button>
     </div>
 
-    <div class="resources-grid" id="resources-grid">
-      <!-- Populated by JS -->
-    </div>
+    <div class="resources-grid" id="resources-grid"></div>
   </section>
 
   <!-- ===== MESSAGES VIEW ===== -->
@@ -327,17 +364,12 @@
     </div>
 
     <div class="messages-layout">
-      <!-- Teacher List -->
       <div class="teacher-list card">
         <div class="tl-header">Teachers</div>
-        <div id="teacher-list-items">
-          <!-- Populated by JS -->
-        </div>
+        <div id="teacher-list-items"></div>
       </div>
 
-      <!-- Right panel: compose + sent history -->
       <div class="messages-right">
-        <!-- Compose Area -->
         <div class="compose-area card">
           <div class="compose-header">
             <div class="compose-to" id="compose-to">Select a teacher →</div>
@@ -368,7 +400,6 @@
           </div>
         </div>
 
-        <!-- Sent Messages History -->
         <div class="card sent-history-card">
           <div class="card-header">
             <h3>Sent Messages</h3>
@@ -390,17 +421,50 @@
         <p class="view-subtitle">Find support from the right person</p>
       </div>
     </div>
-
-    <div class="teachers-grid" id="teachers-grid">
-      <!-- Populated by JS -->
-    </div>
+    <div class="teachers-grid" id="teachers-grid"></div>
   </section>
 
 </main>
 
-<!-- ===== MODALS ===== -->
+<!-- ===== AI CHATBOT ===== -->
+<button class="chatbot-fab" id="chatbot-fab" onclick="openChatbot()" title="AI Wellbeing Coach">
+  <span class="fab-icon">✦</span>
+  <span class="fab-pulse"></span>
+</button>
 
-<!-- Result Modal (after check-in) -->
+<div class="chatbot-panel" id="chatbot-panel">
+  <div class="chatbot-header">
+    <div class="chatbot-header-info">
+      <div class="chatbot-avatar">✦</div>
+      <div>
+        <div class="chatbot-title">Pulse AI Coach</div>
+        <div class="chatbot-subtitle">Student Wellbeing Assistant</div>
+      </div>
+    </div>
+    <div class="chatbot-header-actions">
+      <button class="chatbot-clear" onclick="clearChat()" title="Clear chat">🗑️</button>
+      <button class="chatbot-close" onclick="closeChatbot()">✕</button>
+    </div>
+  </div>
+  <div class="chatbot-messages" id="chatbot-messages">
+        <button class="chat-suggestion" onclick="sendSuggestion(this)">I'm feeling overwhelmed</button>
+        <button class="chat-suggestion" onclick="sendSuggestion(this)">Help me study better</button>
+        <button class="chat-suggestion" onclick="sendSuggestion(this)">I can't sleep well</button>
+      </div>
+    </div>
+  </div>
+  <div class="chatbot-input-area">
+    <textarea class="chatbot-input" id="chatbot-input" placeholder="Ask anything about your wellbeing..." rows="1"></textarea>
+    <button class="chatbot-send" id="chatbot-send" onclick="sendChatMessage()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- ===== MODALS ===== -->
 <div class="modal-overlay" id="modal-result">
   <div class="modal-box">
     <div class="modal-result-ring">
@@ -422,7 +486,6 @@
   </div>
 </div>
 
-<!-- Anonymous Help Modal -->
 <div class="modal-overlay" id="modal-anon">
   <div class="modal-box">
     <h2 class="modal-title">Anonymous Help Request</h2>
@@ -435,7 +498,6 @@
   </div>
 </div>
 
-<!-- Upload Modal -->
 <div class="modal-overlay" id="modal-upload">
   <div class="modal-box">
     <h2 class="modal-title">Upload Resource</h2>
@@ -467,8 +529,29 @@
   </div>
 </div>
 
-<!-- Toast notification -->
 <div class="toast" id="toast"></div>
+
+<!-- RESOURCE VIEW MODAL -->
+<div class="modal-overlay" id="modal-resource-view">
+  <div class="modal-box" style="max-width: 700px; text-align: left;">
+    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+      <div>
+        <div class="modal-title" id="resource-modal-type" style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 8px;">Resource Type</div>
+        <h2 id="resource-modal-title" style="font-size: 1.8rem; font-weight: 800; margin-bottom: 8px;"></h2>
+        <p id="resource-modal-subject" style="color: var(--text-muted); font-size: 0.9rem;"></p>
+      </div>
+      <button class="chatbot-close" onclick="closeModal('modal-resource-view')">✕</button>
+    </div>
+    
+    <div id="resource-modal-content" style="background: var(--bg-card2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; margin: 20px 0; min-height: 300px; line-height: 1.8; color: var(--text-primary);">
+    </div>
+    
+    <div style="display: flex; gap: 10px; justify-content: space-between;">
+      <span id="resource-modal-teacher" style="color: var(--text-muted); font-size: 0.9rem; align-self: center;"></span>
+      <button class="btn-primary" onclick="closeModal('modal-resource-view')">Close</button>
+    </div>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>
